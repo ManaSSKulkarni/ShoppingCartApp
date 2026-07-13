@@ -1,33 +1,56 @@
-import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Cart } from './cart.js';
-import { UserContext } from './user.js';
-import Header from './header.js'; 
-import Footer from './footer.js'; 
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Cart } from "./cart";
+import { UserContext } from "./user";
+import Header from "./header";
+import Footer from "./footer";
+import { useRef } from "react"; 
 
 const PrintBill = () => {
     const { cart, setCart } = useContext(Cart);
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
+    const hasPlacedOrder = useRef(false);
 
     const navigate = useNavigate();
-    const handleClick = () => {
-        setCart([]);
-        navigate('/mycart');
-    };
+    const [order, setOrder] = useState(null);
+    
 
-    const getProductCounts = (cart) => {
-      const counts = {};
-      cart.forEach(product => {
-        counts[product.id] = (counts[product.id] || 0) + 1;
-      });
-      return counts;
-    };
-    const productCounts = getProductCounts(cart);
+    const totalAmount = cart.reduce(
+    (sum, item) =>
+        sum + item.product.price * item.quantity,
+    0
+);
 
-    const totalAmount = Object.keys(productCounts).reduce((total, productId) => {
-      const product = cart.find(p => p.id === parseInt(productId));
-      return total + (product.price * productCounts[productId]);
-    }, 0);
+  const handleClick = () => {
+
+    setCart([]);
+
+    setUser(null);
+
+    navigate("/mycart");
+
+};
+ useEffect(() => {
+
+    if (hasPlacedOrder.current) return;
+
+    if (!user?.userid || cart.length === 0) return;
+
+    hasPlacedOrder.current = true;
+
+    axios.post(
+        `${process.env.REACT_APP_API_URL}/place-order`,
+        {
+            userid: user.userid,
+            cartitems: cart,
+            totalcost: totalAmount
+        }
+    )
+    .then(res => setOrder(res.data))
+    .catch(console.log);
+
+}, [user?.userid, cart, totalAmount]);
 
     return (
     <>
@@ -48,20 +71,61 @@ const PrintBill = () => {
           <div style={styles.billContainer}>
             <center><h2>Items Ordered</h2></center>
             <ul style={styles.itemList}>
-              {Object.keys(productCounts).map(productId => {
-                const product = cart.find(p => p.id === parseInt(productId));
-                return (
-                  <li key={productId} style={styles.itemDetails}>
-                    <h3 style={styles.productTitle}>{product.title}</h3>
-                    <p>Category: {product.category}</p>
-                    <p>Price: Rs {product.price}</p>
-                    <p>Quantity: {productCounts[productId]}</p>
-                    <p>Total: Rs {product.price * productCounts[productId]}</p>
-                  </li>
-                );
-              })}
+              {cart.map((item) => {
+
+    const product = item.product;
+
+    return (
+
+        <li
+            key={product.id}
+            style={styles.itemDetails}
+        >
+
+            <h3 style={styles.productTitle}>
+                {product.title}
+            </h3>
+
+            <p>Category : {product.category}</p>
+
+            <p>Price : ₹ {product.price}</p>
+
+            <p>Quantity : {item.quantity}</p>
+
+            <p>
+                Total : ₹ {(product.price * item.quantity).toFixed(2)}
+            </p>
+
+        </li>
+
+    );
+
+})}
             </ul>
-            <h2 style={styles.totalAmount}>Total Amount: Rs {totalAmount}</h2>
+
+            {order && (
+
+<div
+    style={{
+        marginTop:20,
+        background:"white",
+        padding:15,
+        borderRadius:10
+    }}
+>
+
+    <p><strong>Order ID :</strong> {order.orderid}</p>
+
+    <p>
+        <strong>Order Date :</strong>
+        {" "}
+        {new Date(order.orderdate).toLocaleString()}
+    </p>
+
+</div>
+
+)}
+            <h2 style={styles.totalAmount}>Total Amount: ₹ {totalAmount.toFixed(2)}</h2>
           </div>
         )}
       </div>

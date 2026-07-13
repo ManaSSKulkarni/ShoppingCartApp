@@ -1,22 +1,11 @@
-import React,{useContext,useEffect} from 'react';
+import React from 'react';
 import Header from './header';
 import Body from './body';
 import Footer from './footer.js';
-import { UserContext } from './user.js';
-import { Cart} from './cart.js';
+
 import { Navbar } from './navbar.js';
 
 const About = () => {
-
-    const {setUser}=useContext(UserContext)
-    useEffect(() => {
-        setUser(null);
-      }, [setUser]);
-
-    const {setCart} = useContext(Cart)
-    useEffect(() => {
-        setCart([]);
-      }, [setCart]);
 
     return (
         <>
@@ -43,9 +32,8 @@ const About = () => {
                 <h2 style={styles.heading}>Contact</h2>
                 <p style={styles.paragraph}>If you have any queries, feel free to reach out to :</p>
                 <ul style={styles.list}>
-                    <li>Email: ManasSKulkarni@philips.com</li>
+                    <li>Email: manaskulkarniwork@gmail.com</li>
                     <li>Phone: 9945401508</li>
-                    <li>Address: #106, 1st C main, Manjunath nagar, Ittamadu, BSK 3rd stage, Bengaluru -85</li>
                 </ul>
             </div>
           </Body>

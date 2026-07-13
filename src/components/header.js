@@ -17,8 +17,8 @@ const logoTextContainerStyle = {
 };
 
 const imgStyle = {
-  height: '120px',
-  width: '120px',
+  height: "90px",
+    width: "90px",
   marginRight: '20px', 
   border: '5px solid #ffcc00', 
   borderRadius: '50%', // Rounded image
@@ -63,11 +63,23 @@ function Header(props) {
   return (
     <header style={headerStyle}>
       <div style={logoTextContainerStyle}>
-        <img src={cartlogo} style={imgStyle} className="App-logo" alt="logo" onClick={handleClick}/>
+        <img
+    src={cartlogo}
+    alt="logo"
+    style={imgStyle}
+    onClick={handleClick}
+    onMouseOver={(e) => {
+        e.currentTarget.style.transform = "scale(1.08)";
+        e.currentTarget.style.transition = "0.3s";
+    }}
+    onMouseOut={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
+    }}
+/>
         <div style={textContainerStyle}>
-          <h1 style={h1Style}>MYCART</h1>
-          <h2 style={h2Style}>{props.title}</h2>
-        </div>
+  <h1 style={h1Style}>MYCART</h1>
+  <h2 style={h2Style}>{props.title}</h2>
+</div>
       </div>
     </header>
   );

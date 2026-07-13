@@ -1,23 +1,24 @@
 import React,{useContext,useEffect} from 'react';
-import { NavLink } from 'react-router-dom';
 import Header from './header.js'; 
 import Footer from './footer.js'; 
 import { Cart } from './cart.js';
 import { UserContext } from './user.js';
 import { Navbar } from './navbar.js';
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 
 const Home = () => {
 
-    const {setUser}=useContext(UserContext)
-    useEffect(() => {
-        setUser(null);
-      }, [setUser]);
+    const navigate = useNavigate();
+    const { setUser } = useContext(UserContext);
+const { setCart } = useContext(Cart);
 
-    const {setCart} = useContext(Cart)
     useEffect(() => {
-        setCart([]);
-      }, [setCart]);
+    setUser(null);
+    setCart([]);
+}, [setUser, setCart]);
 
       return (
         <>
@@ -52,35 +53,34 @@ const Home = () => {
                 margin: '10px 0',
                 fontStyle: 'italic',
             }}>
-                Products API :  
-                <a 
-                    href='https://fakestoreapi.com/products' 
-                    target='_blank' 
-                    rel='noopener noreferrer' 
-                    style={{ color: '#3498db', textDecoration: 'underline' }}
-                >
-                  https://fakestoreapi.com/products
-                </a>
+                Products powered by{" "}
+<a
+  href="https://fakestoreapi.com/products"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{ color: "#3498db", textDecoration: "underline" }}
+>
+  Fake Store API
+</a>
             </h2>
 
-            <NavLink 
-              to='/mycart/register'
-              style={{
-                display: 'inline-block',
-                padding: '12px 24px',
-                marginTop: '20px',
-                backgroundColor: 'black', 
-                color: 'white',
-                textDecoration: 'none',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                borderRadius: '4px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-              }}
-              >
-                Order
-              </NavLink>
+            <GoogleLogin
+  onSuccess={(credentialResponse) => {
+
+      const googleUser = jwtDecode(
+    credentialResponse.credential
+);
+
+console.log(googleUser);
+
+setUser(googleUser);
+
+navigate("/mycart/register");
+  }}
+  onError={() => {
+    alert("Google Login failed. Please try again.");
+}}
+/>
           </div>
     
           <Footer />

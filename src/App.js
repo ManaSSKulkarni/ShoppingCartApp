@@ -1,5 +1,5 @@
 import Home from './components/home.js';
-import {Routes,Route} from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import About from './components/about.js'
 import RegistrationForm from './components/registration.js';
 import Order from './components/orderpage.js';
@@ -14,13 +14,16 @@ function App() {
     <User>
       <MyCart>
         <Routes>
-          <Route path='/mycart' element={<Home />} />
-          <Route path='mycart/about' element={<About />} />
-          <Route path='mycart/register' element={<RegistrationForm />} />
-          <Route path='mycart/register/order' element={<Order />} />
-          <Route path='mycart/register/order/revieworder' element={<ReviewOrder />} />
-          <Route path='mycart/register/order/review/orderplaced' element={<PrintBill />} />
-        </Routes>
+
+    <Route path="/" element={<Navigate to="/mycart" replace  />} />
+    <Route path="/mycart" element={<Home />} />
+    <Route path="/mycart/about" element={<About />} />
+    <Route path="/mycart/register" element={<RegistrationForm />} />
+    <Route path="/mycart/register/order" element={<Order />} />
+    <Route path="/mycart/register/order/revieworder" element={<ReviewOrder />} />
+    <Route path="/mycart/register/order/review/orderplaced" element={<PrintBill />} />
+
+</Routes>
      </MyCart>
     </User>
     </>
